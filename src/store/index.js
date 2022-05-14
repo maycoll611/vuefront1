@@ -26,7 +26,7 @@ export default new Vuex.Store({
     },
     guia_actual:null,
     editar:false,
-    host:'https://apiguias.herokuapp.com/',
+    host:'https://guiasprueba.herokuapp.com/',
     // host: 'http://localhost:8000/'
   },
   mutations: {

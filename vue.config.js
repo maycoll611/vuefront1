@@ -6,6 +6,6 @@ module.exports = {
   ,
   devServer: {
     // proxy: 'https://localhost:8080'
-    proxy: 'https://apiguias.herokuapp.com'
+    proxy: 'https://guiasprueba.herokuapp.com/'
 }
 }

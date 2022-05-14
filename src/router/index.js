@@ -60,20 +60,20 @@ const router= new VueRouter({
   routes
 })
 
-import store from '@/store'
-//verificar las rutas protegidas por "navigation guards"
-router.beforeEach((to,from,next) =>{
-  if(to.meta.protegido){
-    if(store.state.usuario.api_token == ''){
-      next({name:'login'})
-      // next()
-    }else{
-      next()
-    }
-      // next()
-  }else{
-    next()
-  }
-})
+// import store from '@/store'
+// //verificar las rutas protegidas por "navigation guards"
+// router.beforeEach((to,from,next) =>{
+//   if(to.meta.protegido){
+//     if(store.state.usuario.api_token == ''){
+//       next({name:'login'})
+//       // next()
+//     }else{
+//       next()
+//     }
+//       // next()
+//   }else{
+//     next()
+//   }
+// })
 
 export default router
