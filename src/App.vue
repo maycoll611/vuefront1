@@ -5,7 +5,7 @@
       <!-- <v-img src="logotipo.png" class="ml-1" width="150" height="30"></v-img> -->
       <v-app-bar-title>APLICATIVO</v-app-bar-title>
       <v-spacer></v-spacer>
-      <span class="text-caption">{{usuario.usuario_detalle_nombre}}</span>
+      
       <v-menu right>
         
         <template v-slot:activator="{ on, attrs }">
@@ -17,6 +17,11 @@
         </template>
 
         <v-list dense>
+          <v-list-item class="pa-1 py-0">
+            <v-col cols="12">
+              <span class="text-caption">{{usuario.usuario_detalle_nombre}}</span>
+            </v-col>
+          </v-list-item>
           <v-list-item class="pa-1 py-0">
               <v-btn class="rounded-pill" text color="" @click="detalle_usuario()" dense> <v-icon class="pr-1" small>mdi-account-circle </v-icon> Usuario</v-btn>
           </v-list-item>

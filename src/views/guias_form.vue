@@ -1587,6 +1587,8 @@ export default {
             this.dialog_pdf = true
             const doc = new jsPDF()
             // doc.getFontList({'times':['normal', 'italic',''], 'arial':['normal', 'bold',''] })
+            // doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
+            // doc.setFont('Comic Sans');
             doc.setFont('Courier','courier','normal')
             doc.setFontSize('9')
             doc.text("G: 007-0019540",150+x,20+y)
