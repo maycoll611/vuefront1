@@ -47,6 +47,38 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
+      <!-- <v-list shaped>
+      <v-list-group
+        v-for="item in items"
+        :key="item.title"
+        v-model="item.active"
+        dense
+        color="teal darken-5"
+      >
+        <template v-slot:activator>
+          <v-list-item 
+          :to="{name:item.ruta}"
+          dense
+          >
+            <v-list-item-icon>
+              <v-icon>{{item.icon}}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.title"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+
+        <v-list-item
+          v-for="child in item.items"
+          :key="child.title"
+        >
+          <v-list-item-content>
+            <v-list-item-title v-text="child.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list> -->
       <v-list shaped>
         <v-list-item-group
           v-model="selecionado"
@@ -65,6 +97,7 @@
               <v-list-item-title v-text="item.title"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -85,10 +118,13 @@ export default {
       drawer: null,
       opciones:[{label:"Salir",icon:"mdi-close",action:""}],
       items:[
-        { title: 'Inicio', ruta:'inicio', icon: 'mdi-view-dashboard',estado:true},
-        {title: 'Guias', ruta:'guias',icon:'mdi-view-dashboard',estado:true},
-        {title: 'Guias form', ruta:'guias_form',icon:'mdi-book',estado:true},
-        { title: 'Configuracion', ruta:'configuracion', icon: 'mdi-cogs',estado:false},
+        { title: 'Inicio', ruta:'inicio', icon: 'mdi-view-dashboard',estado:true,active:false},
+        {title: 'Guias', ruta:'guias',icon:'mdi-view-dashboard',estado:true,active:false},
+        // {title: 'Guias form', ruta:'guias_form',icon:'mdi-book',estado:true},
+        { title: 'Configuracion', ruta:'configuracion', icon: 'mdi-cogs',estado:false,active:false,
+        items:[{title:'Uusuarios'}]},
+        { title: 'Preguntas', ruta:'preguntas', icon: 'mdi-card-account-details-outline',estado:false,active:false,
+        items:[{title:'Uusuarios'}]}
       ],
   }),
   methods:{

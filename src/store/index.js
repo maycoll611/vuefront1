@@ -9,12 +9,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    areas:['LOGISTICA','PRODUCCION','RECURSOS HUMANOS','MANT. MECANICO','MANT. ELECTRICO','EQUIPO MOVIL','CONTROL CALIDAD','SIG','SISTEMAS','GERENCIA','ENVASE Y DESPACHO','INGENIERIA','MATERIAS PRIMAS','SEGURIDAD','PLANIFICACION','OTROS'],
     usuario:{
       usuario_id:"",
       usuario_nombre:"maycoll",
       usuario_pw:"123456",
       usuario_detalle_nombre:"",
       usuario_area:'',
+      usuario_cargo:'',
       api_token:""
     },
     estado_sesion:true,
@@ -26,8 +28,8 @@ export default new Vuex.Store({
     },
     guia_actual:null,
     editar:false,
-    host:'https://guiasprueba.herokuapp.com/',
-    // host: 'http://localhost:8000/'
+    // host:'https://guiasprueba.herokuapp.com/',
+    host: 'http://localhost:8000/'
   },
   mutations: {
     cambiar_editar(state,bool){

@@ -2,28 +2,109 @@
     <v-row class="mx-0">
         <v-col cols="12" md="5">
             <v-row class="mx-0">
-                <v-col cols="12" md="6" class="pb-1">
-                    <v-card class="my-1">
-                        <v-card-text class="pa-1">
-                            <p class="mb-0"><span class="font-weight-black">GR: {{guia.serie + '-' + guia.correlativo}} </span>  </p>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-                <v-col cols="12" md="6" class="pb-1">
-                    <v-btn rounded small color="teal darken-2 white--text" class="mt-1" @click="pdf_prueba">Impresion</v-btn>
-                    <v-btn rounded small color="primary" class="mt-1" @click="guardar_guia">Guardar</v-btn>
-                    <v-dialog v-model="dialog_pdf" max-width="900">
-                        <v-card>
-                            <v-card-title>Vista de impresion de PDF</v-card-title>
-                            <v-card-text>
-                                <iframe :src="pdf_data" class="border-round" width="100%" height="700"></iframe>
+                <v-col cols="12" md="12" class="pb-1">
+                    <v-row class="ma-0">
+                        <v-card class="my-1">
+                            <v-card-text class="pa-1">
+                                <p class="mb-0"><span class="font-weight-black">{{"("+guia.id+") "}}GR: {{guia.serie + '-' + guia.correlativo}} </span>  </p>
                             </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="primary" small @click="dialog_pdf = !dialog_pdf">OK</v-btn>
-                            </v-card-actions>
                         </v-card>
-                    </v-dialog>
+                        <v-spacer></v-spacer>
+                       
+                        <v-btn rounded small color="red darken-1 white--text" class="mt-1" @click="pdf_prueba"><v-icon>mdi-file-pdf</v-icon></v-btn>
+                         <v-btn-toggle
+                        
+                        rounded
+                        >
+                            <v-btn rounded small color="green darken-1 white--text" :disabled="guia.id != ''?true:false " class="mt-1" @click="confirmar_guardar_documento()">Guardar Doc</v-btn>
+                            <v-btn rounded small color="green darken-1 white--text" :disabled="(guia.correlativo == '' && usuario.usuario_cargo == 'administrador')?false:true " class="mt-1" @click="confirmar_guardar_guia">Generar GR</v-btn>
+                            <!-- <v-btn rounded small color="red darken-2 white--text" class="mt-1" @click="pdf_prueba"><v-icon>mdi-file-pdf</v-icon></v-btn>
+                            <v-btn rounded small color="primary" :disabled="guia.id != ''?true:false " class="mt-1" @click="guardar_documento">Guardar Doc</v-btn>
+                            <v-btn rounded small color="green darken-1" :disabled="(guia.correlativo == '' && usuario.usuario_cargo == 'administrador')?false:true " class="mt-1" @click="generar_guia">Generar GR</v-btn> -->
+                        </v-btn-toggle>    
+                    </v-row>
+                </v-col>
+                <v-dialog
+                    v-model="dialog_confirm_documento"
+                    persistent
+                    max-width="400"
+                    >
+                    <v-card>
+                        <v-card-title class="text-h5">
+                        Realmente desea crear el documento...?
+                        </v-card-title>
+                        <v-card-text>
+                            Recordar que los datos principales como DATOS DESTINO, DIRECCION, MOTIVO, TIPO PAQUETE, MATERIALES, RESPONSABLE.No podran ser modificados.  
+                        </v-card-text>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="red darken-1"
+                            small
+                            rounded
+                            @click="dialog_confirm_documento = false"
+                        >
+                            Cancelar
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            small
+                            rounded
+                            @click="guardar_documento()"
+                        >
+                            Aceptar
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-dialog
+                    v-model="dialog_confirm_guia"
+                    persistent
+                    max-width="400"
+                    >
+                    <v-card>
+                        <v-card-title class="text-h5">
+                        Realmente desea crear la GUIA DE REMISION...?
+                        </v-card-title>
+                        <v-card-text>
+                            Recordar que los datos principales como DATOS DESTINO, DIRECCION, MOTIVO, TIPO PAQUETE, MATERIALES, RESPONSABLE.No podran ser modificados.
+                            Solamente podran ser asignados datos de transportista si ahun no estan asignados.  
+                        </v-card-text>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="red darken-1"
+                            small
+                            rounded
+                            @click="dialog_confirm_guia = false"
+                        >
+                            Cancelar
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            small
+                            rounded
+                            @click="generar_guia()"
+                        >
+                            Aceptar
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-dialog v-model="dialog_pdf" max-width="900">
+                    <v-card>
+                        <v-card-title>Vista de impresion de PDF</v-card-title>
+                        <v-card-text>
+                            <iframe :src="pdf_data" class="border-round" width="100%" height="700"></iframe>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" small @click="dialog_pdf = !dialog_pdf">OK</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-col cols="12" md="6" class="pb-1">
+                   
                     <!-- <v-text-field append-icon="mdi-arrow-right-bold-circle" counter="11" outlined dense label="Ruc" class="text-body-2"></v-text-field> -->
                 </v-col> 
 <!-- proveedor  -->
@@ -36,7 +117,7 @@
                             <v-form ref="form_nuevo_proveedor" v-model="valid_nuevo_proveedor" lazy-validation>
                                 <v-row class="mx-0 pt-3">
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="12" md="5">
-                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.razon_social" counter maxlength="10" required dense outlined label="RAZON SOCIAL"></v-text-field>                                                                                                               
+                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.razon_social" counter maxlength="80" required dense outlined label="RAZON SOCIAL"></v-text-field>                                                                                                               
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="10" md="4">
                                         <v-text-field rounded :rules="rucRules" v-model="proveedor_nuevo.ruc" counter="11"  dense outlined label="RUC"></v-text-field>
@@ -45,22 +126,22 @@
                                         <v-switch inset dense label="Transporte" class="my-auto" v-model="proveedor_nuevo.transporte"></v-switch>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="12" md="6">
-                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.direccion" dense counter outlined label="DIRECCION FISCAL"></v-text-field>
+                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.direccion" dense counter="100" outlined label="DIRECCION FISCAL"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="6" md="3">
-                                        <v-text-field rounded v-model="proveedor_nuevo.numero" dense counter outlined label="NUMERO"></v-text-field>
+                                        <v-text-field rounded v-model="proveedor_nuevo.numero" dense counter="10" outlined label="NUMERO"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="6" md="3">
-                                        <v-text-field rounded v-model="proveedor_nuevo.zona" dense counter outlined label="ZONA"></v-text-field>
+                                        <v-text-field rounded v-model="proveedor_nuevo.zona" dense counter="45" outlined label="ZONA"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="12" md="4">
-                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.distrito" dense counter outlined label="DISTRITO"></v-text-field>
+                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.distrito" dense counter="45" outlined label="DISTRITO"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="12" md="4">
-                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.provincia" dense counter outlined label="PROVINCIA"></v-text-field>
+                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.provincia" dense counter="45" outlined label="PROVINCIA"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2" cols="12" md="4">
-                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.departamento" dense counter outlined label="DEPARTAMENTO"></v-text-field>
+                                        <v-text-field rounded :rules="requiredRules" v-model="proveedor_nuevo.departamento" dense counter="45" outlined label="DEPARTAMENTO"></v-text-field>
                                     </v-col>
                                     <v-col class=" py-0 px-1 text-body-2 py-2 " cols="12" md="12">
                                         <v-row class="mx-0" >
@@ -76,8 +157,8 @@
                 <v-col cols="12" md="12" class="py-0">
                     <v-card class="my-1">
                         <v-card-title class="py-1 px-3 teal lighten-3 text-body-2">
-                            <span>Proveedor  Fecha: {{guia.fecha_hoy}}</span> <v-spacer></v-spacer>
-                            <v-btn @click="get_proveedor()"  small color="orange lighten-2" rounded :disabled="!editar"><v-icon>mdi-pencil</v-icon></v-btn>
+                            <span>Destino  Fecha: {{guia.fecha_hoy}}</span> <v-spacer></v-spacer>
+                            <v-btn @click="get_proveedor()"  small color="orange lighten-2" rounded :disabled="!editar?true:false"><v-icon>mdi-pencil</v-icon></v-btn>
                             <!-- proveedor dialogo -->
                             <v-dialog v-model="dialog_destinatario" max-width="1000" min-hight="800" >
                                 <v-card>
@@ -89,19 +170,18 @@
                                     icons-and-text
                                     >
                                     <v-tabs-slider></v-tabs-slider>
-                                    <v-tab href="#tab-1">
+                                    <!-- <v-tab href="#tab-1">
                                         Editar Proveedor.
                                         <v-icon>mdi-newspaper-plus</v-icon>
-                                    </v-tab>
-                                    <v-tab href="#tab-2">
+                                    </v-tab> -->
+                                    <v-tab href="#tab-1">
                                         Buscar en mi DB
                                         <v-icon>mdi-clock</v-icon>
                                     </v-tab>
 
                                     </v-tabs>
                                     <v-tabs-items v-model="tab">
-                                        <v-tab-item value="tab-1">
-                                            <!-- formulario proveedor -->
+                                        <!-- <v-tab-item value="tab-1">
                                             <v-card >
                                                 <v-card-title color="teal">
                                                     Datos de Proveedor
@@ -143,8 +223,8 @@
                                                 </v-card-actions>
                                             </v-card>
                                             
-                                        </v-tab-item>
-                                        <v-tab-item value="tab-2">
+                                        </v-tab-item> -->
+                                        <v-tab-item value="tab-1">
                                             <v-card>
                                                 <v-card-title>
                                                 Proveedores
@@ -230,23 +310,14 @@
 
                                     <v-tab href="#tab-1">
                                         Formulario
-                                        <v-icon>mdi-clock</v-icon>
+                                        <v-icon>mdi-newspaper</v-icon>
                                     </v-tab>
 
-                                    <v-tab href="#tab-2">
-                                        Buscar SNT
-                                        <v-icon>mdi-bank-plus</v-icon>
-                                    </v-tab>
-
-                                    <v-tab href="#tab-3">
-                                        Nuevo
-                                        <v-icon>mdi-newspaper-plus</v-icon>
-                                    </v-tab>
                                     </v-tabs>
                                     <v-tabs-items v-model="tab">
                                         <v-tab-item value="tab-1">
                                             <v-row class="mx-0">
-                                                <v-col cols=6>
+                                                <v-col cols=12 md="6">
                                                     <v-card class="my-2">
                                                         <v-card-title class="px-2">
                                                             <!-- <v-spacer></v-spacer> -->
@@ -254,13 +325,13 @@
                                                         </v-card-title>
                                                         <v-card-text>
                                                             <v-row class="mx-0">
-                                                                <v-col cols=12><v-text-field v-model="guia.datos_partida.direccion" dense label="Direccion" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_partida.nro" dense label="Nro" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_partida.zona" dense label="Zona/ Urb" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_partida.distrito" dense label="Distrito" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_partida.provincia" dense label="Provincia" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_partida.departamento" dense label="Departamento" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="12">
+                                                                <v-col cols="12" md=12 class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.direccion" dense label="Direccion" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="6" class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.nro" dense label="Nro" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="6" class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.zona" dense label="Zona/ Urb" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.distrito" dense label="Distrito" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.provincia" dense label="Provincia" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field disabled v-model="guia.datos_partida.departamento" dense label="Departamento" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="12" class="px-1 py-0">
                                                                     <v-combobox
                                                                     @change="verificar()"
                                                                     v-model="guia.usuario_envia"
@@ -277,7 +348,7 @@
                                                         </v-card-text>
                                                     </v-card>
                                                 </v-col>
-                                                <v-col cols=6>
+                                                <v-col cols=12 md=6>
                                                    <v-card class="my-2">
                                                         <v-card-title class="px-2">
                                                             <!-- <v-spacer></v-spacer> -->
@@ -285,15 +356,15 @@
                                                         </v-card-title>
                                                         <v-card-text>
                                                             <v-row class="mx-0">
-                                                                <v-col cols=12><v-text-field v-model="guia.datos_llegada.direccion" dense label="Direccion" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_llegada.nro" dense label="Nro" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_llegada.zona" dense label="Zona/ Urb" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_llegada.distrito" dense label="Distrito" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_llegada.provincia" dense label="Provincia" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="4"><v-text-field v-model="guia.datos_llegada.departamento" dense label="Departamento" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_llegada.contacto_nombre" dense label="Contacto Nombre" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_llegada.contacto_numero" dense label="Contacto Celular/ Telefono" outlined rounded hide-details></v-text-field></v-col>
-                                                                <v-col cols="6"><v-text-field v-model="guia.datos_llegada.contacto_correo" dense label="Contacto E-mail" outlined rounded hide-details></v-text-field></v-col>
+                                                                <v-col cols="12" md=12 class="px-1 py-0"><v-text-field counter="80" v-model="guia.datos_llegada.direccion" dense label="Direccion" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="6" md="6" class="px-1 py-0"><v-text-field counter="20" v-model="guia.datos_llegada.nro" dense label="Nro" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="6" md="6" class="px-1 py-0"><v-text-field counter="50" v-model="guia.datos_llegada.zona" dense label="Zona/ Urb" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field counter="50" v-model="guia.datos_llegada.distrito" dense label="Distrito" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field counter="50" v-model="guia.datos_llegada.provincia" dense label="Provincia" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="4" class="px-1 py-0"><v-text-field counter="50" v-model="guia.datos_llegada.departamento" dense label="Departamento" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="6" class="px-1 py-0"><v-text-field counter="60" v-model="guia.datos_llegada.contacto_nombre" dense label="Contacto Nombre" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="6" class="px-1 py-0"><v-text-field counter="9" v-model="guia.datos_llegada.contacto_numero" dense label="Contacto Celular/ Telefono" outlined rounded></v-text-field></v-col>
+                                                                <v-col cols="12" md="6" class="px-1 py-0"><v-text-field counter="45" v-model="guia.datos_llegada.contacto_correo" dense label="Contacto E-mail" outlined rounded></v-text-field></v-col>
                                                             </v-row>
                                                         </v-card-text>
                                                     </v-card> 
@@ -672,231 +743,227 @@
             <v-col cols="12" md="12" class="py-1">
                     <v-card class="my-1">
                         <v-card-title class="py-1 px-1 teal lighten-3 text-caption">
-                            <v-row class="mx-0">
+                                <v-col cols="12">
+                                    <v-row class="mx-0 ">
+                                        <span>MATERIALES</span>
+                                            <v-spacer></v-spacer>
+                                            <v-btn @click="dialog_materiales = !dialog_materiales" small color="orange lighten-2" rounded :disabled="!editar">
+                                                <v-icon>mdi-pencil</v-icon>
+                                            </v-btn>
+                                    
+                                        <v-dialog v-model="dialog_materiales" max-width="950">
+                                            <v-card>
+                                                <v-tabs
+                                                v-model="tab"
+                                                background-color="teal"
+                                                centered
+                                                dark
+                                                icons-and-text
+                                                >
+                                                <v-tabs-slider></v-tabs-slider>
+
+                                                <v-tab href="#tab-1">
+                                                    Materiales 
+                                                    <v-icon>mdi-grid</v-icon>
+                                                </v-tab>
+
+                                                <v-tab href="#tab-2">
+                                                    Export
+                                                    <v-icon>mdi-heart</v-icon>
+                                                </v-tab>
+                                                </v-tabs>
+                                                <v-tabs-items v-model="tab">
+                                                    <v-tab-item value="tab-1">
+                                                        <v-card>
+                                                            <v-card-text>
+                                                                <v-form ref="form_material" class="" v-model="valid_material">
+                                                                    <v-card outlined rounded class="pa-0 pt-2">
+                                                                        <v-row class="mx-0 rounded pt-2 mb-2" outlined elevation="5">
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field rounded v-model="material.codigo" label="Codigo" dense outlined
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field :rules="requiredRules" rounded v-model="material.cantidad" label="Cantidad" dense outlined
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field :rules="requiredRules"  rounded v-model="material.um" label="U. Medida" dense outlined
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="12" md="6" class="py-0">
+                                                                                <v-text-field :rules="requiredRules" counter="80"  rounded v-model="material.descripcion" label="Material descripcion" dense outlined
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-switch
+                                                                                class="ma-0"
+                                                                                v-model="material.con_retorno"
+                                                                                inset
+                                                                                dense                                                                        
+                                                                                label="Retorno"
+                                                                                ></v-switch>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field rounded v-model="material.marca" label="Marca" dense outlined 
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field rounded v-model="material.modelo" label="Modelo" dense outlined 
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field rounded v-model="material.serie" label="Serie" dense outlined 
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            <v-col cols="6" md="2" class="py-0">
+                                                                                <v-text-field rounded v-model="material.peso" label="Peso" dense outlined 
+                                                                                ></v-text-field>
+                                                                            </v-col>
+                                                                            
+                                                                            <v-col cols="2" class="py-0 align-items-end">
+                                                                                <v-btn :disabled="!valid_material" rounded color="primary" @click="agregar_material" ><v-icon>mdi-plus</v-icon> Add</v-btn>
+                                                                            </v-col>
+                                                                        </v-row>
+                                                                    </v-card>
+                                                                </v-form>
+                                                                
+                                                                <v-divider class="my-1"></v-divider>
+                                                                <v-row class="mx-0">
+                                                                    <v-col cols="3" class="px-1">
+                                                                        <v-row class="mx-0 my-0">
+                                                                            <span>Codigo</span><v-spacer></v-spacer><span>Cant</span><span>~UN.MED</span>
+                                                                        </v-row> 
+                                                                    </v-col>
+                                                                    <v-col cols="9" class="px-1">
+                                                                        <span>DESCRIPCIOON ~ retorno</span> 
+                                                                    </v-col>
+                                                                </v-row>
+                                                                <v-row class="ma-0" v-if="(this.guia.materiales).length == 0">
+                                                                    <v-col cols=12 class="text-center">
+                                                                        <span> Ningun elemento asignado.. !!</span>
+                                                                    </v-col>
+                                                                </v-row>
+                                                                <v-row class="mx-0" v-for="(item,index) of guia.materiales" :key="index">
+                                                                    <v-col cols="3" class="px-1">
+                                                                        <v-row class="mx-0 my-0">
+                                                                        <v-icon @click="eliminar_material(index)">mdi-close-circle</v-icon><span>{{item.codigo}}</span><v-spacer></v-spacer><span>{{item.cantidad}}</span><span>~{{item.um}}</span>
+                                                                        </v-row> 
+                                                                    </v-col>
+                                                                    <v-col cols="9" class="px-1 detalle-item"  @click="editar_material(index)">
+                                                                        <v-row class="ma-0">
+                                                                            <span>{{item.descripcion}}</span>  
+                                                                            <span v-if="item.marca">~MA: {{item.marca}}</span>
+                                                                            <span v-if="item.modelo">~MO: {{item.modelo}}</span>
+                                                                            <span v-if="item.serie">~SE: {{item.serie}}</span>                                
+                                                                            <v-spacer></v-spacer>
+                                                                            <span v-if="item.peso">{{item.peso}}</span>
+                                                                            <span>{{item.con_retorno?"true":"false"}}</span>                                       
+                                                                        </v-row>
+                                                                    </v-col>
+                                                                </v-row>
+                                                                <v-row class="ma-0 blue-grey lighten-4 rounded">
+                                                                    <v-col cols="3" class="pa-1">
+                                                                        <v-row class="ma-0 my-0">
+                                                                            <span>TOTAL: </span><v-spacer></v-spacer><span>{{total_materiales}}</span><span>UND</span>
+                                                                        </v-row> 
+                                                                    </v-col>
+                                                                </v-row>  
+                                                            </v-card-text>
+                                                            <v-divider class="my-1"></v-divider>
+                                                            <v-card-actions>
+                                                                <v-menu
+                                                                    ref="menu_f_retorno"
+                                                                    v-model="menu_f_retorno"
+                                                                    :close-on-content-click="false"
+                                                                    transition="scale-transition"
+                                                                    offset-y
+                                                                    min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        v-model="guia.f_retorno"
+                                                                        label="Fecha retorno"
+                                                                        readonly
+                                                                        clearable
+                                                                        rounded
+                                                                        outlined
+                                                                        dense
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                        @click:clear="guia.f_retorno = null"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="guia.f_retorno"
+                                                                    no-title
+                                                                    scrollable
+                                                                    @input="menu_f_retorno = false"
+                                                                    >
+                                                                    <v-spacer></v-spacer>
+                                                                    <!-- <v-btn
+                                                                        text
+                                                                        color="primary"
+                                                                        @click="menu_f_retorno = false"
+                                                                    >
+                                                                        Cancel
+                                                                    </v-btn>
+                                                                    <v-btn
+                                                                        text
+                                                                        color="primary"
+                                                                        @click="$refs.menu_f_retorno.save(guia.f_retorno)"
+                                                                    >
+                                                                        OK
+                                                                    </v-btn> -->
+                                                                    </v-date-picker>
+                                                                </v-menu>
+                                                                
+                                                                <v-text-field counter="80"  rounded v-model="guia.descripcion" label="Textos adicionales" dense outlined
+                                                                ></v-text-field>
+                                                                <v-spacer></v-spacer>
+
+                                                                <v-btn color="primary" rounded md @click="dialog_materiales = !dialog_materiales">OK</v-btn>
+                                                            </v-card-actions>
+                                                        </v-card>
+                                                    </v-tab-item>
+                                                    <v-tab-item value="tab-2">
+                                                        <v-card>
+                                                            <v-card-title>
+                                                            Export Excel
+                                                            
+                                                            </v-card-title>
+                                                            <v-card-text>
+                                                                <v-textarea v-model="material_textarea" rounded dense rows="6" outlined label="Excel">                                                    
+                                                                </v-textarea>
+                                                                <!-- {{material_textarea = material_textarea.replace(/(\t)/, "enter")}} -->
+                                                            </v-card-text>
+                                                        </v-card>
+
+                                                    </v-tab-item>
+                                                </v-tabs-items>
+                                            </v-card>
+                                        </v-dialog>
+                                    </v-row>
+                                </v-col>
+                        </v-card-title>
+                        <v-divider></v-divider>
+                        
+                        <v-card-text class="pa-1 text-caption">
+                            <v-row class="mx-0 font-weight-black">
                                 <v-col cols="3" class="px-1">
                                     <v-row class="mx-0 my-0">
-                                        <span>Codigo</span><v-spacer></v-spacer><span>Cant.</span><span>um</span>
+                                        <span>Codigo</span><v-spacer></v-spacer><span>Cant</span><span>~UN.MED</span>
                                     </v-row> 
                                 </v-col>
                                 <v-col cols="9" class="px-1">
-                                    <v-row class="ma-0">
-                                        <span>DESCRIPCIOON</span> 
-                                        <v-spacer></v-spacer>
-                                        <v-btn @click="dialog_materiales = !dialog_materiales" small color="orange lighten-2" rounded :disabled="!editar">
-                                            <v-icon>mdi-pencil</v-icon>
-                                        </v-btn>
-                                    </v-row>
-                                    <v-dialog v-model="dialog_materiales" max-width="900">
-                                        <v-card>
-                                            <v-tabs
-                                            v-model="tab"
-                                            background-color="teal"
-                                            centered
-                                            dark
-                                            icons-and-text
-                                            >
-                                            <v-tabs-slider></v-tabs-slider>
-
-                                            <v-tab href="#tab-1">
-                                                Recents
-                                                <v-icon>mdi-phone</v-icon>
-                                            </v-tab>
-
-                                            <v-tab href="#tab-2">
-                                                Buscar
-                                                <v-icon>mdi-heart</v-icon>
-                                            </v-tab>
-
-                                            <v-tab href="#tab-3">
-                                                Buscar SNT
-                                                <v-icon>mdi-account-box</v-icon>
-                                            </v-tab>
-                                            </v-tabs>
-                                            <v-tabs-items v-model="tab">
-                                                <v-tab-item value="tab-1">
-                                                    <v-card>
-                                                        <v-card-title>
-                                                            Materiales
-                                                        </v-card-title>
-                                                        <v-card-text>
-                                                            <v-form ref="form_material" v-model="valid_material">
-                                                                <v-row class="mx-0">
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field rounded v-model="material.codigo" label="Codigo" dense outlined
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field :rules="requiredRules" rounded v-model="material.cantidad" label="Cantidad" dense outlined
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field :rules="requiredRules"  rounded v-model="material.um" label="U. Medida" dense outlined
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="12" md="6" class="py-0">
-                                                                        <v-text-field :rules="requiredRules" counter="80"  rounded v-model="material.descripcion" label="Material descripcion" dense outlined
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-switch
-                                                                        class="ma-0"
-                                                                        v-model="material.con_retorno"
-                                                                        inset
-                                                                        dense                                                                        
-                                                                        label="Retorno"
-                                                                        ></v-switch>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field rounded v-model="material.marca" label="Marca" dense outlined 
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field rounded v-model="material.modelo" label="Modelo" dense outlined 
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field rounded v-model="material.serie" label="Serie" dense outlined 
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-col cols="6" md="2" class="py-0">
-                                                                        <v-text-field rounded v-model="material.peso" label="Peso" dense outlined 
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                    <v-spacer></v-spacer>
-                                                                    <v-col cols="2" class="py-0">
-                                                                        <v-spacer></v-spacer><v-btn :disabled="!valid_material" rounded color="primary" @click="agregar_material" ><v-icon>mdi-plus</v-icon> Add</v-btn>
-                                                                    </v-col>
-                                                                </v-row>
-                                                            </v-form>
-                                                            
-                                                            <v-divider class="my-1"></v-divider>
-                                                            <v-row class="mx-0">
-                                                                <v-col cols="3" class="px-1">
-                                                                    <v-row class="mx-0 my-0">
-                                                                        <span>Codigo</span><v-spacer></v-spacer><span>Cant</span><span>~UN.MED</span>
-                                                                    </v-row> 
-                                                                </v-col>
-                                                                <v-col cols="9" class="px-1">
-                                                                    <span>DESCRIPCIOON ~ retorno</span> 
-                                                                </v-col>
-                                                            </v-row>
-                                                            <v-row class="mx-0" v-for="(item,index) of guia.materiales" :key="index">
-                                                                <v-col cols="3" class="px-1">
-                                                                    <v-row class="mx-0 my-0">
-                                                                    <v-icon @click="eliminar_material(index)">mdi-close-circle</v-icon><span>{{item.codigo}}</span><v-spacer></v-spacer><span>{{item.cantidad}}</span><span>~{{item.um}}</span>
-                                                                    </v-row> 
-                                                                </v-col>
-                                                                <v-col cols="9" class="px-1 detalle-item"  @click="editar_material(index)">
-                                                                    <v-row class="ma-0">
-                                                                        <span>{{item.descripcion}}</span>  
-                                                                        <span v-if="item.marca">~MA: {{item.marca}}</span>
-                                                                        <span v-if="item.modelo">~MO: {{item.modelo}}</span>
-                                                                        <span v-if="item.serie">~SE: {{item.serie}}</span>                                
-                                                                        <v-spacer></v-spacer>
-                                                                        <span v-if="item.peso">{{item.peso}}</span>
-                                                                        <span>{{item.con_retorno?"true":"false"}}</span>                                       
-                                                                    </v-row>
-                                                                </v-col>
-                                                            </v-row>
-                                                            <v-row class="ma-0 blue-grey lighten-4 rounded">
-                                                                <v-col cols="3" class="pa-1">
-                                                                    <v-row class="ma-0 my-0">
-                                                                        <span>TOTAL: </span><v-spacer></v-spacer><span>{{total_materiales}}</span><span>UND</span>
-                                                                    </v-row> 
-                                                                </v-col>
-                                                            </v-row>  
-                                                        </v-card-text>
-                                                        <v-divider class="my-1"></v-divider>
-                                                        <v-card-actions>
-                                                            <v-menu
-                                                                ref="menu_f_retorno"
-                                                                v-model="menu_f_retorno"
-                                                                :close-on-content-click="false"
-                                                                :return-value.sync="guia.f_retorno"
-                                                                transition="scale-transition"
-                                                                offset-y
-                                                                min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    v-model="guia.f_retorno"
-                                                                    label="Fecha retorno"
-                                                                    readonly
-                                                                    rounded
-                                                                    outlined
-                                                                    dense
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="guia.f_retorno"
-                                                                no-title
-                                                                scrollable
-                                                                >
-                                                                <v-spacer></v-spacer>
-                                                                <v-btn
-                                                                    text
-                                                                    color="primary"
-                                                                    @click="menu_f_retorno = false"
-                                                                >
-                                                                    Cancel
-                                                                </v-btn>
-                                                                <v-btn
-                                                                    text
-                                                                    color="primary"
-                                                                    @click="$refs.menu_f_retorno.save(guia.f_retorno)"
-                                                                >
-                                                                    OK
-                                                                </v-btn>
-                                                                </v-date-picker>
-                                                            </v-menu>
-                                                            
-                                                            <v-text-field counter="80"  rounded v-model="guia.descripcion" label="Textos adicionales" dense outlined
-                                                            ></v-text-field>
-                                                            <v-spacer></v-spacer>
-
-                                                            <v-btn color="primary" rounded md @click="dialog_materiales = !dialog_materiales">OK</v-btn>
-                                                        </v-card-actions>
-                                                    </v-card>
-                                                </v-tab-item>
-                                                <v-tab-item value="tab-2">
-                                                    <v-card>
-                                                        <v-card-title>
-                                                        Export Excel
-                                                        
-                                                        </v-card-title>
-                                                        <v-card-text>
-                                                            <v-textarea v-model="material_textarea" rounded dense rows="6" outlined label="Excel">                                                    
-                                                            </v-textarea>
-                                                            {{material_textarea}}
-                                                        </v-card-text>
-                                                    </v-card>
-
-                                                </v-tab-item>
-                                            
-                                                <v-tab-item value="tab-3">
-                                                    <!-- formulario proveedor -->
-                                                    <v-card >
-                                                        <v-card-title color="teal">
-                                                            Buscar proveedor
-                                                        </v-card-title>
-                                                        <v-card-text>
-                                                           
-                                                        </v-card-text>
-                                                        <v-card-actions>
-                                                            
-                                                        </v-card-actions>
-                                                    </v-card>
-                                                </v-tab-item>
-                                            </v-tabs-items>
-                                        </v-card>
-                                    </v-dialog>
+                                    <span>DESCRIPCIOON ~ retorno</span> 
                                 </v-col>
                             </v-row>
-                        </v-card-title>
-                        <v-divider></v-divider>
-                        <v-card-text class="pa-1 text-caption">
+                            <v-row class="ma-0" v-if="(this.guia.materiales).length == 0">
+                                <v-col cols=12 class="text-center rounded-pill">
+                                    <span> Ningun elemento asignado.. !!</span>
+                                </v-col>
+                            </v-row>
                             <v-row class="mx-0" v-for="(item,k) of guia.materiales" :key="k">
                                 <v-col cols="3" class="px-1">
                                     <v-row class="mx-0 my-0">
@@ -946,6 +1013,9 @@ import moment from 'moment'
 import axios from 'axios'
 import {mapState, mapMutations} from 'vuex'
 
+// const testFont = import('fonts_maycoll/Sanseriffic.otf');
+
+
 moment.locale('es')
 export default {
     data:()=>({
@@ -957,6 +1027,8 @@ export default {
         data_buscar_sunat_ruc:'',
         estado_conductor_carro:true,
         //dialogos
+        dialog_confirm_documento:false,
+        dialog_confirm_guia:false,
         dialog_pdf:false,
         dialog_punto_entrega:false,
         dialog_motivo:false,
@@ -1014,7 +1086,7 @@ export default {
                 direccion:'CAR. JULIACA - PUNO KM. 11 HACIENDA YUNGURA',
                 ruc:'20115039262',
                 numero:'S/N',
-                zona:'SIN ZONA',
+                zona:'HACIENDA YUNGURA',
                 distrito:'CARACOTO',
                 provincia:'SAN ROMAN',
                 departamento:'PUNO',
@@ -1046,6 +1118,7 @@ export default {
         proveedores1:[],
         //datos generales de guia
         guia:{
+            id:'',
             serie:'007',
             correlativo:'',
             // fecha_hoy: moment().format("dddd, DD MMMM YYYY, h:mm:ss a"),
@@ -1136,18 +1209,55 @@ export default {
                 this.guia.materiales.forEach(element => {
                     total = total + parseFloat(element.cantidad)
                 })
-                // this.guia.cantidad_total = total.toFixed(2)
+            this.asignar(total.toFixed(2))
             }
             return total.toFixed(2)
         },
     },
+    watch: {
+        cantidad_total: function () {
+        this.guia.cantidad_total = this.total_materiales
+        }
+    },
     mounted(){
-        console.log(this.guia_actual)
+        // console.log(this.guia_actual)
         this.get_usuarios()
         this.asignar_valores_guia()
+        console.log(this.guia)
+        console.log(this.usuario)
     },
     methods:{
         ...mapMutations(['cambiar_dialogo_loader','cambiar_alerta','valores_guia_actual','cambiar_editar']),
+        validar_datos_guia(){
+            if(!this.guia.destinatario.ruc || this.guia.destinatario.ruc == ''){
+                return false
+            }
+            if(!this.guia.usuario_envia || this.guia.usuario_envia.usuario_id == ''){
+                return false
+            }
+            if(!this.guia.motivo || this.guia.motivo == ''){
+                return false
+            }
+            return
+        },
+        generar_guia(){
+            this.guia.usuario = this.usuario.usuario_id
+            this.cambiar_dialogo_loader()
+            axios.post(this.host+'api/generar_guia',this.guia).then(resp =>{
+                console.log(resp)
+                this.cambiar_alerta({estado:true,color:'teal',texto:'Generado corectamente...!'})
+                this.limpiar_guia()
+                this.cambiar_dialogo_loader()
+                 this.$router.push({name:"guias"})
+            }).catch((error)=>{
+                console.log(error)
+                this.cambiar_dialogo_loader()
+                this.cambiar_alerta({estado:true,color:'red darken-2',texto:'No guardado error servidor...!'})
+            })
+        },
+        asignar(val){
+            this.guia.cantidad_total = val
+        },
         verificar(){
             console.log(this.guia.usuario_envia)
         },
@@ -1171,10 +1281,12 @@ export default {
         asignar_valores_guia(){
 
             this.limpiar_guia()
+            console.log(this.guia_actual)
             if(this.guia_actual){
+            this.guia.id = !this.editar?this.guia_actual.venta.venta_id:''
             this.guia.serie = '007'
             this.guia.correlativo = !this.editar?this.guia_actual.venta.venta_correlativo:''
-            this.guia.fecha_hoy = this.guia_actual.venta.venta_fecha_registro
+            this.guia.fecha_hoy = this.guia_actual.venta.venta_fecha_registro+''
             this.guia.motivo = this.guia_actual.venta.venta_motivo_nro
             this.guia.motivo_detalle = this.guia_actual.venta.venta_motivo_detalle
             this.guia.destinatario.razon_social = this.guia_actual.cliente.empresa_razon_social
@@ -1237,6 +1349,7 @@ export default {
         },
         limpiar_guia(){
             if(this.guia_actual){
+            this.guia.id = ''
             this.guia.serie = '007'
             this.guia.correlativo = ''
             this.guia.fecha_hoy = moment().format('Y-MM-D hh:mm:ss')
@@ -1280,23 +1393,31 @@ export default {
             this.guia.f_retorno = ''
             this.guia.cantidad_total = ''
             this.guia.peso_total = ''
-            this.guia.usuario_envia = null
+            this.guia.usuario_envia = ''
             this.guia.descripcion = ''
             }
         },
-        guardar_guia(){
-            this.guia.usuario = "maycoll"
-            this.cambiar_dialogo_loader()
+        confirmar_guardar_documento(){
+            this.dialog_confirm_documento = true
+        },
+        confirmar_guardar_guia(){
+            this.dialog_confirm_guia=true
+        },
+        guardar_documento(){
             
-            axios.post(this.host+'api/guardar_guia',this.guia).then(resp =>{
+            this.guia.usuario = this.usuario.usuario_id
+            this.cambiar_dialogo_loader()
+            axios.post(this.host+'api/guardar_documento',this.guia).then(resp =>{
                 console.log(resp)
                 this.cambiar_alerta({estado:true,color:'teal',texto:'Guardado corectamente...!'})
                 this.limpiar_guia()
                 this.cambiar_dialogo_loader()
+                this.dialog_confirm_documento = false
                  this.$router.push({name:"guias"})
             }).catch((error)=>{
                 console.log(error)
                 this.cambiar_dialogo_loader()
+                this.dialog_confirm_documento = false
                 this.cambiar_alerta({estado:true,color:'red darken-2',texto:'No se puede guardar error servidor...!'})
             })
         },
@@ -1526,7 +1647,21 @@ export default {
             this.guia.transportista.telefono=item.conductor_telefono
             this.guia.transportista.licencia=item.conductor_licencia
         },
+        limpiar_transportista(){
+                this.guia.transportista.razon_social = ''
+                this.guia.transportista.ruc = ''
+                this.guia.transportista.nombre_conductor = ''
+                this.guia.transportista.telefono = ''
+                this.guia.transportista.licencia = ''
+                this.guia.transportista.placa_t = ''
+                this.guia.transportista.mtc_t = ''
+                this.guia.transportista.marca_t = ''
+                this.guia.transportista.placa_p = '',
+                this.guia.transportista.mtc_p = ''
+                this.guia.transportista.marca_p = ''
+        },
         transportista_row(item){
+            this.limpiar_transportista()
             this.guia.transportista.razon_social = item.empresa_razon_social
             this.guia.transportista.ruc = item.empresa_ruc
             this.get_conductores_carros()
@@ -1589,9 +1724,13 @@ export default {
             // doc.getFontList({'times':['normal', 'italic',''], 'arial':['normal', 'bold',''] })
             // doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
             // doc.setFont('Comic Sans');
-            doc.setFont('Courier','courier','normal')
+
+            // doc.addFileToVFS("testFont.ttf", testFont);
+            // doc.addFont("testFont.ttf", "testFont", "normal");
+            // doc.setFont("testFont");
+            // doc.setFont('Courier','courier','normal')
             doc.setFontSize('9')
-            doc.text("G: 007-0019540",150+x,20+y)
+            doc.text("G: 007-"+this.guia.correlativo,150+x,20+y)
             //DATOS DE DESTINATARIO
             doc.text(this.guia.fecha_hoy,15+x,15+y)
             doc.text(this.guia.destinatario.razon_social,10+x,20+y)
@@ -1645,7 +1784,7 @@ export default {
                     doc.text(element.codigo? element.codigo + '':"",15+x,materiales_y)
                     doc.text(element.cantidad? element.cantidad + '':"",40+x,materiales_y)
                     doc.text(element.um? element.um + '':"",45+x,materiales_y)
-                    doc.text(element.descripcion? element.descripcion + '':"",55+x,materiales_y,{maxWidth:300,lineHeightFactor:.8,charSpace:-.5})
+                    doc.text(element.descripcion? element.descripcion + '':"",55+x,materiales_y,{maxWidth:300,lineHeightFactor:.8,charSpace:-.2})
                      
                 })
             }
@@ -1657,8 +1796,23 @@ export default {
              
             // doc.text("Hello world! Lorem ipsum dolor sit, amet consectetur adipisicing elit. At error nihil corrupti neque delectus beatae quisquam tenetur officiis mollitia totam dolore ipsam, consectetur quam, voluptatibus veniam alias id sed nisi!", 10+x,50+y,
             // {maxWidth:50,lineHeightFactor:.8,charSpace:-.1})
-    
-            this.pdf_data =  doc.output('datauristring')
+            // doc.autoPrint({variant: 'non-conform'});
+            // doc.save('autoprint.pdf');
+
+            // doc.createAnnotation({
+            //     type: 'text',
+            //     title: 'note',
+            //     bounds: {
+            //         x: 0,
+            //         y: 0,
+            //         w: 200,
+            //         h: 80
+            //     },
+            //     contents: 'This is text annotation (closed by default)',
+            //     open: false
+            // });
+            // doc.save('GR:'+this.guia.id+'007-'+this.guia.correlativo+'.pdf')
+            this.pdf_data =  doc.output('dataurlstring',{filename: 'GR:'+this.guia.id+'007-'+this.guia.correlativo+'.pdf'})
         }
     }
 }  

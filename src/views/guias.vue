@@ -1,11 +1,21 @@
 <template>
     <v-row class="mx-0 pt-4">
-        <v-col cols="6"><v-btn rounded color="cyan accent-4" @click="nueva_guia()" class="text-caption">Nueva guia</v-btn><v-spacer></v-spacer></v-col>
-        <v-col cols="6">
+        <v-col cols="12" md="6">
+            <v-row class="ma-0">
+                <v-btn rounded color="cyan accent-4" @click="nueva_guia()"  class="text-caption">Nuevo Doc</v-btn>
+                <v-spacer></v-spacer>
+                <a :href="host+'api/export_get_guias'" type="button">
+                    <v-btn rounded color="green darken-3"  class="text-caption white--text"><v-icon>mdi-microsoft-excel</v-icon></v-btn>           
+                </a>
+            </v-row>
+        </v-col>
+        <v-col cols="12" md="6">
             <v-text-field
                 v-model="buscar_guia"
                 append-icon="mdi-magnify"
                 label="Buscar"
+                append-outer-icon="mdi-filter-menu"
+                @click:append-outer="filtrar()"
                 dense
                 outlined
                 rounded
@@ -94,7 +104,111 @@
                     </v-card-text>
                 </v-card>
             </v-dialog> 
-           
+<!-- diago filtro para formulario  -->
+             <v-dialog v-model="dialog_filtro_guias" max-width="500">
+                <v-card >
+                    <v-card-title color="teal">
+                        Filtros para consulta
+                    </v-card-title>
+                    <v-card-text>
+                        <v-form ref="form_anular_guia" v-model="validate_form_filtro">
+                            <v-row class="mx-0 pt-3">
+                                <v-col class=" pa-1 text-body-2 py-2" cols="12" md="6">
+                                    <v-menu
+                                        ref="menu_desde"
+                                        v-model="menu_desde"
+                                        :close-on-content-click="false"
+                                        transition="scale-transition"
+                                        offset-y
+                                        min-width="auto"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                            v-model="filtro_guias.desde"
+                                            label="Desde Fecha"
+                                            readonly
+                                            clearable
+                                            rounded
+                                            outlined
+                                            dense
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click:clear="filtro_guias.desde = null"
+                                        ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                        v-model="filtro_guias.desde"
+                                        no-title
+                                        scrollable
+                                        @input="menu_desde = false"
+                                        >
+                                        </v-date-picker>
+                                    </v-menu>
+                                </v-col>
+                                <v-col class=" pa-1 text-body-2 py-2" cols="12" md="6">
+                                    <v-menu
+                                        ref="menu_hasta"
+                                        v-model="menu_hasta"
+                                        :close-on-content-click="false"
+                                        transition="scale-transition"
+                                        offset-y
+                                        min-width="auto"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                            v-model="filtro_guias.hasta"
+                                            label="Hasta fecha"
+                                            readonly
+                                            clearable
+                                            rounded
+                                            outlined
+                                            dense
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click:clear="filtro_guias.hasta = null"
+                                        ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                        v-model="filtro_guias.hasta"
+                                        no-title
+                                        scrollable
+                                        @input="menu_hasta = false"
+                                        >
+                                        </v-date-picker>
+                                    </v-menu>
+                                </v-col>
+                                <v-col class=" pa-1 text-body-2 py-2" cols="12" md="6">
+                                    <v-combobox
+                                    v-model="filtro_guias.usuario_area"
+                                    :items="areas"
+                                    label="Select"
+                                    multiple
+                                    chips
+                                    clearable
+                                    outlined
+                                    dense
+                                    rounded
+                                    ></v-combobox>
+                                    <!-- <v-text-field rounded v-model="anulacion.motivo_descripcion" dense outlined label="Motivo de la anulacion"></v-text-field> -->
+                                </v-col>
+                                <v-col class=" pa-1 text-body-2 py-2" cols="12">
+                                    <v-row class="ma-0">
+                                        <v-spacer></v-spacer>
+
+                                        <!-- <v-btn rounded color="red" small @click="guardar_anular_guia">Si, anular</v-btn> -->
+                                    </v-row>
+                                </v-col>
+                                <v-col class=" pa-1 text-body-2 py-2" cols="12">
+                                    <v-row class="ma-0">
+                                        <v-spacer></v-spacer>
+                                        <v-btn rounded color="primary" small @click="get_guias">Aplicar</v-btn>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                        </v-form>
+                    </v-card-text>
+                </v-card>
+            </v-dialog> 
         </v-col>
     </v-row>
 </template>
@@ -106,7 +220,10 @@ import {mapState, mapMutations} from 'vuex'
 export default{
     data:()=>({
         ancho:false,
+        menu_desde:false,
+        menu_hasta:false,
         dialog_anular_guia:false,
+        dialog_filtro_guias:false,
         anulacion:{correlativo:'',motivo_descripcion:''},
         parametros:{
             fecha_inicio:moment().format("dddd, DD MMMM YYYY, h:mm:ss a"),
@@ -114,7 +231,8 @@ export default{
         },
         buscar_guia:'',
         headers:[{text:'Op',value:'actions'},
-                {text:"Nro.", value:"venta_correlativo"},
+                {text:"NroDoc", value:"venta_id"},
+                {text:"Guia", value:"venta_correlativo"},
                 {text:"Razon social",value:"empresa_razon_social"},
                 {text:"Ruc",value:"empresa_ruc"},
                 {text:"Destino",value:"venta_llegada_departamento"},
@@ -137,21 +255,61 @@ export default{
                     ],
         prueba_guias:[],
         validate_guia_anular:null,
+        validate_form_filtro:null,
+        filtro_guias:{
+            desde:'2022-01-01',
+            hasta:'2022-05-16',
+            usuario_area:[],
+            usuario_cargo:''
+        }
     }),
     mounted(){
-        this.get_guias()
+            this.filtro_guias.desde = moment().subtract(1, 'months').format('YYYY-MM-DD')
+            this.filtro_guias.hasta = moment().format('YYYY-MM-DD')
+            
+            if(this.usuario.usuario_cargo == 'administrador'){
+                this.filtro_guias.usuario_area =null
+            }else{
+                this.filtro_guias.usuario_area[0] = this.usuario.usuario_area
+            }
+            this.filtro_guias.usuario_cargo = this.usuario.usuario_cargo
+            this.get_guias()
     },
     computed:{
-        ...mapState(['usuario','dialogo_loader','alerta_snack','guia_actual','editar','host'])
+        ...mapState(['usuario','dialogo_loader','alerta_snack','guia_actual','editar','host','areas'])
     },
     methods:{
         ...mapMutations(['cambiar_dialogo_loader','cambiar_alerta','valores_guia_actual','cambiar_editar']),
+        filtrar(){
+            this.dialog_filtro_guias = true
+            console.log('filtrar')
+        },
+        exportar_excel(){
+            console.log('exportar excel')
+            this.cambiar_dialogo_loader()
+            this.filtro_guias.api_token = this.usuario.api_token
+            this.filtro_guias.usuario_id = this.usuario.usuario_id
+            console.log(this.filtro_guias)
+            axios.post(this.host+'api/export_get_guias',this.filtro_guias).then(response =>{
+                // this.prueba_guias = eval(response.data)
+                console.log(response)
+                this.cambiar_dialogo_loader()
+                this.dialog_filtro_guias?this.dialog_filtro_guias=false : this.dialog_filtro_guias
+            }).catch((error)=>{
+                console.log(error)
+                this.cambiar_dialogo_loader()
+                this.cambiar_alerta({estado:true,color:'red darken-2',texto:'Sin Respuesta del servidor...!'})
+            })
+        },
         get_guias(){
             this.cambiar_dialogo_loader()
-            console.log(this.usuario)
-            axios.post(this.host+'api/get_guias',{api_token:this.usuario.api_token,usuario_id:this.usuario.usuario_id}).then(response =>{
+            this.filtro_guias.api_token = this.usuario.api_token
+            this.filtro_guias.usuario_id = this.usuario.usuario_id
+            console.log(this.filtro_guias)
+            axios.post(this.host+'api/get_guias',this.filtro_guias).then(response =>{
                 this.prueba_guias = eval(response.data)
                 this.cambiar_dialogo_loader()
+                this.dialog_filtro_guias?this.dialog_filtro_guias=false : this.dialog_filtro_guias
             }).catch((error)=>{
                 console.log(error)
                 this.cambiar_dialogo_loader()
@@ -177,7 +335,7 @@ export default{
         },
         ver_guia(item){
             this.cambiar_dialogo_loader()
-            axios.post(this.host+'api/get_guias_correlativo',{correlativo:item.venta_correlativo}).then(response =>{
+            axios.post(this.host+'api/get_guias_id',{id:item.venta_id}).then(response =>{
                 this.valores_guia_actual(response.data)
                 console.log(response.data)
                 this.cambiar_dialogo_loader()
@@ -192,7 +350,7 @@ export default{
         },
         tomar_guia(item){
             this.cambiar_dialogo_loader()
-            axios.post(this.host+'api/get_guias_correlativo',{correlativo:item.venta_correlativo}).then(response =>{
+            axios.post(this.host+'api/get_guias_id',{id:item.venta_id}).then(response =>{
                 this.valores_guia_actual(response.data)
                 console.log(response.data)
                 this.cambiar_dialogo_loader()
