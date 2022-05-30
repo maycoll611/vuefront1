@@ -476,8 +476,8 @@
                 <v-col cols="12" md="6" class="py-1">
                     <v-card class="my-1">
                             <v-card-title class="py-1 px-3 teal lighten-3 text-body-2">
-                                <span>Transportista</span> <v-spacer></v-spacer>
-                                <v-btn @click="get_transportita" rounded small color="orange lighten-2" :disabled="!editar">
+                                <span>Transportista</span><v-btn :disabled="!editar" small @click="limpiar_transportista" rounded pill><v-icon> mdi-close-circle</v-icon></v-btn><v-spacer></v-spacer>
+                                <v-btn @click="get_transportita" rounded small color="orange lighten-2" :disabled="guia.transportista.ruc == '' || editar ==true ?false:true">
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
                                 <!-- dialogo motivo -->
@@ -534,7 +534,7 @@
                                                                                     <v-form ref="form_conductor_nuevo" v-model="valid_conductor_nuevo">
                                                                                         <v-row class="mx-0">
                                                                                             <v-col cols=12 md=4 class="pa-1">
-                                                                                                <v-text-field :rules="requiredRules" v-model="conductor_nuevo.licencia" outlined dense rounded label="Licencia" counter="7" required ></v-text-field>
+                                                                                                <v-text-field :rules="requiredRules" v-model="conductor_nuevo.licencia" outlined dense rounded label="Licencia" counter="50" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
                                                                                                 <v-text-field :rules="requiredRules" v-model="conductor_nuevo.nombre_conductor" outlined dense rounded label="Nombre" counter="15" required ></v-text-field>
@@ -603,19 +603,19 @@
                                                                                                 <v-text-field :rules="requiredRules" v-model="carro_nuevo.placa_t" outlined dense rounded label="Placa T" counter="7" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
-                                                                                                <v-text-field :rules="requiredRules" v-model="carro_nuevo.marca_t" outlined dense rounded label="Marca T" counter="15" required ></v-text-field>
+                                                                                                <v-text-field :rules="requiredRules" v-model="carro_nuevo.marca_t" outlined dense rounded label="Marca T" counter="30" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
-                                                                                                <v-text-field :rules="requiredRules" v-model="carro_nuevo.mtc_t" outlined dense rounded label="Mtc Tracto" counter="9" required ></v-text-field>
+                                                                                                <v-text-field :rules="requiredRules" v-model="carro_nuevo.mtc_t" outlined dense rounded label="Mtc Tracto" counter="10" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
                                                                                                 <v-text-field  v-model="carro_nuevo.placa_p" outlined dense rounded label="Placa C" counter="7" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
-                                                                                                <v-text-field  v-model="carro_nuevo.marca_p" outlined dense rounded label="Marca C" counter="15" required ></v-text-field>
+                                                                                                <v-text-field  v-model="carro_nuevo.marca_p" outlined dense rounded label="Marca C" counter="30" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12 md=4 class="pa-1">
-                                                                                                <v-text-field v-model="carro_nuevo.mtc_p" outlined dense rounded label="Mtc carreta" counter="9" required ></v-text-field>
+                                                                                                <v-text-field v-model="carro_nuevo.mtc_p" outlined dense rounded label="Mtc carreta" counter="10" required ></v-text-field>
                                                                                             </v-col>
                                                                                             <v-col cols=12>
                                                                                                 <v-row class="mx-0">
@@ -665,7 +665,7 @@
                                         </v-card-text>
                                         <v-card-actions>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="primary" small @click="dialog_transportista = !dialog_transportista">OK</v-btn>
+                                            <v-btn color="primary" small @click="asignar_transportista()">Asignar</v-btn>
                                         </v-card-actions>
                                     </v-card>
                                 </v-dialog>
@@ -1278,6 +1278,29 @@ export default {
                  this.cambiar_alerta({estado:true,color:'red darken-2',texto:'no usuarios servidor...!'})
             })            
         },
+        asignar_transportista(){
+           this.cambiar_dialogo_loader()
+            if(this.guia.id||this.guia.id != ''){
+                axios.post(this.host+'api/asignar_transportista',this.guia).then(response => {
+                    console.log(response.data)
+                    if(response.data.status == true){
+                    this.cambiar_alerta({estado:true,color:'teal',texto:'Transportista asignado Doc: '+this.guia.id})
+                    }else{
+                    this.cambiar_alerta({estado:true,color:'red darken-2',texto:'problemas conexion servidor...!'})                        
+                    }
+                    this.dialog_transportista = !this.dialog_transportista
+                    this.cambiar_dialogo_loader()
+                }).catch((error)=>{
+                    alert(error)
+                    this.cambiar_dialogo_loader()
+                    this.cambiar_alerta({estado:true,color:'red darken-2',texto:'problemas conexion servidor...!'})
+                })
+            }
+            else
+            {
+                this.dialog_transportista = !this.dialog_transportista
+            } 
+        },
         asignar_valores_guia(){
 
             this.limpiar_guia()
@@ -1286,7 +1309,7 @@ export default {
             this.guia.id = !this.editar?this.guia_actual.venta.venta_id:''
             this.guia.serie = '007'
             this.guia.correlativo = !this.editar?this.guia_actual.venta.venta_correlativo:''
-            this.guia.fecha_hoy = this.guia_actual.venta.venta_fecha_registro+''
+            this.guia.fecha_hoy = !this.editar?this.guia_actual.venta.venta_fecha_registro:moment().format('Y-MM-D hh:mm:ss')
             this.guia.motivo = this.guia_actual.venta.venta_motivo_nro
             this.guia.motivo_detalle = this.guia_actual.venta.venta_motivo_detalle
             this.guia.destinatario.razon_social = this.guia_actual.cliente.empresa_razon_social

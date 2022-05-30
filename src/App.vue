@@ -118,7 +118,7 @@ export default {
       drawer: null,
       opciones:[{label:"Salir",icon:"mdi-close",action:""}],
       items:[
-        { title: 'Inicio', ruta:'inicio', icon: 'mdi-view-dashboard',estado:true,active:false},
+        { title: 'Inicio', ruta:'inicio', icon: 'mdi-nuxt',estado:true,active:false},
         {title: 'Guias', ruta:'guias',icon:'mdi-view-dashboard',estado:true,active:false},
         // {title: 'Guias form', ruta:'guias_form',icon:'mdi-book',estado:true},
         { title: 'Configuracion', ruta:'configuracion', icon: 'mdi-cogs',estado:false,active:false,

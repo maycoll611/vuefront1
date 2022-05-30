@@ -4,7 +4,7 @@
             <v-row class="ma-0">
                 <v-btn rounded color="cyan accent-4" @click="nueva_guia()"  class="text-caption">Nuevo Doc</v-btn>
                 <v-spacer></v-spacer>
-                <a :href="host+'api/export_get_guias'" type="button">
+                <a :href="host+'api/export_get_guias'" type="button" disabled>
                     <v-btn rounded color="green darken-3"  class="text-caption white--text"><v-icon>mdi-microsoft-excel</v-icon></v-btn>           
                 </a>
             </v-row>
@@ -181,7 +181,7 @@
                                     <v-combobox
                                     v-model="filtro_guias.usuario_area"
                                     :items="areas"
-                                    label="Select"
+                                    label="Select Area"
                                     multiple
                                     chips
                                     clearable
@@ -194,7 +194,6 @@
                                 <v-col class=" pa-1 text-body-2 py-2" cols="12">
                                     <v-row class="ma-0">
                                         <v-spacer></v-spacer>
-
                                         <!-- <v-btn rounded color="red" small @click="guardar_anular_guia">Si, anular</v-btn> -->
                                     </v-row>
                                 </v-col>

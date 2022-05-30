@@ -7,7 +7,7 @@
                 <v-btn small color="primary">
                     <v-icon>mdi-play-circle</v-icon>Iniciar
                 </v-btn>
-                <v-btn small color="yellow darken-1">
+                <v-btn small color="yellow darken-1" @click="restaurar()">
                     <v-icon>mdi-restart</v-icon>Restaurar
                 </v-btn>
                 <v-btn @click="ver_respuestas = !ver_respuestas"  small :color="ver_respuestas?'green lighten-1':''">
@@ -2494,6 +2494,10 @@ export default {
     }),
     methods:{
         ...mapMutations(['cambiar_dialogo_loader']),
+        restaurar(){
+            
+            this.$route.push({name:'preguntas'})
+        },
         verificar_respuesta(indice,letra){
             if(this.preguntas[indice].pregunta_clave == letra){
                 console.log('correcto')

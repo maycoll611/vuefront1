@@ -28,8 +28,8 @@ export default new Vuex.Store({
     },
     guia_actual:null,
     editar:false,
-    // host:'https://guiasprueba.herokuapp.com/',
-    host: 'http://localhost:8000/'
+    host:'https://guiasprueba.herokuapp.com/',
+    // host: 'http://localhost:8000/'
   },
   mutations: {
     cambiar_editar(state,bool){
