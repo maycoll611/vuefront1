@@ -16,16 +16,7 @@
             </v-btn-toggle>
             
         </v-col>
-        <v-col class="px-3" cols="12">
-             <div class="text-center mx-5">
-                <v-pagination
-                v-model="pagina"
-                :length="200"
-                circle
-                ></v-pagination>
-            </div>
-
-        </v-col>
+        
         
         <v-col class="px-3" cols="12">
             <v-card v-if="preguntas.length != 0">
@@ -75,6 +66,16 @@
                 </v-card-text>
             </v-card>
         </v-col>
+        <v-col class="px-3" cols="12">
+             <div class="text-center mx-5">
+                <v-pagination
+                v-model="pagina"
+                :length="200"
+                circle
+                ></v-pagination>
+            </div>
+
+        </v-col>    
     </v-row>
 </template>
 

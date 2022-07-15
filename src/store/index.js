@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 // import axios from 'axios'
 // import VueRouter from 'vue-router'
 
+import usuarios_store from './../modules/usuarios_store'
 // Vue.use(VueRouter)
 Vue.use(Vuex)
 
@@ -67,5 +68,6 @@ export default new Vuex.Store({
     
   },
   modules: {
+    usuarios_store
   }
 })

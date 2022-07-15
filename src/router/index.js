@@ -55,6 +55,12 @@ const routes = [
         name: 'preguntas',
         component: () => import(/* webpackChunkName: "about" */ '../views/preguntas.vue'),
         meta:{protegido:false}
+      },
+      {
+        path: 'inventario',
+        name: 'inventario',
+        component: () => import(/* webpackChunkName: "about" */ '../views/inventario.vue'),
+        meta:{protegido:false}
       }
     ]
     },

@@ -124,7 +124,9 @@ export default {
         { title: 'Configuracion', ruta:'configuracion', icon: 'mdi-cogs',estado:false,active:false,
         items:[{title:'Uusuarios'}]},
         { title: 'Preguntas', ruta:'preguntas', icon: 'mdi-card-account-details-outline',estado:false,active:false,
-        items:[{title:'Uusuarios'}]}
+        items:[{title:'Uusuarios'}]},
+        { title: 'Inventario', ruta:'inventario', icon: 'mdi-cards-variant',estado:false,active:false,
+        items:[{title:'Usuarios'}]}
       ],
   }),
   methods:{
